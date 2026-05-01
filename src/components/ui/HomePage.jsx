@@ -13,7 +13,8 @@ export default function HomePage(props) {
 
     return (
         <div className="flex flex-col w-full h-full ">
-
+             <div className="flex justify-center items-center text-semibold bg-yellow-200 text-black p-1">CoinGecko API's strict 10–20 requests/hour limit may cause occasional feature failures.
+      </div>
             {/* Header */}
             <h1 className="pt-3 pl-5 font-bold text-xl text-zinc-400">
                 My Portfolio

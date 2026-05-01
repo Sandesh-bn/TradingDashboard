@@ -111,16 +111,16 @@ export default function App() {
   const renderPage = () => {
     switch (activePage) {
       case "crypto":
-        return <CryptoPrices cryptoData={cryptoData}  />;
+        return <CryptoPrices cryptoData={cryptoData} />;
 
       case "watchlist":
-        return <WatchList cryptoData={cryptoData}  />;
+        return <WatchList cryptoData={cryptoData} />;
 
       case "settings":
         return <SettingsPage />;
 
       default:
-        return <HomePage  overallAssetsData={overallAssetsData} assets={assets} />;
+        return <HomePage overallAssetsData={overallAssetsData} assets={assets} />;
     }
   };
 
@@ -148,50 +148,53 @@ export default function App() {
   ];
 
   return (
-    <div className="flex h-screen bg-white text-black dark:bg-zinc-900 dark:text-white">
-      {/* Right Sidebar */}
-      <aside className="w-60  border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 p-6 flex flex-col justify-between">
+    <div>
+     
+      <div className="flex h-screen bg-white text-black dark:bg-zinc-900 dark:text-white">
+        {/* Right Sidebar */}
+        <aside className="w-60  border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 p-6 flex flex-col justify-between">
 
-        <div>
-          <h2 className="text-2xl font-bold mb-8">
-            Crypto App
-          </h2>
+          <div>
+            <h2 className="text-2xl font-bold mb-8">
+              Crypto App
+            </h2>
 
-          <nav className="space-y-3">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActivePage(item.id)}
-                className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 transition ${activePage === item.id
+            <nav className="space-y-3">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActivePage(item.id)}
+                  className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 transition ${activePage === item.id
                     ? "bg-black text-white dark:bg-white dark:text-black"
                     : "hover:bg-zinc-200 dark:hover:bg-zinc-800"
-                  }`}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            ))}
-          </nav>
-        </div>
+                    }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </div>
 
-        {/* Dark Mode Toggle */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="flex items-center justify-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-4 py-3 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
-        >
-          {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          {darkMode ? "Light Mode" : "Dark Mode"}
-        </button>
-      </aside>
-      {/* Content Area */}
-      {/* <main className="flex-1 overflow-auto"> */}
-      <main className="flex-1 min-h-0 overflow-hidden">
-        <div className="p-2">
-          {renderPage()}
-        </div>
-      </main>
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="flex items-center justify-center gap-2 rounded-xl border border-zinc-300 dark:border-zinc-700 px-4 py-3 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
+          >
+            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
+        </aside>
+        {/* Content Area */}
+        {/* <main className="flex-1 overflow-auto"> */}
+        <main className="flex-1 min-h-0 overflow-hidden">
+          <div className="p-2">
+            {renderPage()}
+          </div>
+        </main>
 
 
+      </div>
     </div>
   );
 }

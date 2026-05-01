@@ -10,6 +10,8 @@ export default function CryptoPrices(props) {
     return (
         // <div className="h-screen flex flex-col">
         <div className="h-screen flex flex-col min-h-0 overflow-hidden">
+            <div className="flex justify-center items-center text-semibold bg-yellow-200 text-black p-1">CoinGecko API's strict 10–20 requests/hour limit may cause occasional feature failures.
+            </div>
             <h1 className='font-bold pt-3 px-10 text-2xl flex'>Top 100 Cryptocurrencies</h1>
             <div className="flex flex-1">
                 <div className="flex-1 ">
