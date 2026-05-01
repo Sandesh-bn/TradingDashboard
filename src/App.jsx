@@ -184,7 +184,8 @@ export default function App() {
         </button>
       </aside>
       {/* Content Area */}
-      <main className="flex-1 overflow-auto">
+      {/* <main className="flex-1 overflow-auto"> */}
+      <main className="flex-1 min-h-0 overflow-hidden">
         <div className="p-2">
           {renderPage()}
         </div>
