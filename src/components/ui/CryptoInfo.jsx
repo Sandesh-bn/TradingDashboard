@@ -16,12 +16,12 @@ export function CryptoInfo(props) {
 
     const allTimeHighDate = new Date(ath_date).toLocaleString();
     return (
-        <div className="flex flex-col p-5 mr-10 
+        <div className="flex flex-col
             hover:shadow-2xl
                                         transform hover:-translate-y-1
                                         transition-all duration-300 ease-linear
                                         shadow-md flex flex-col p-5
-                                        border rounded m-5 justify-between cursor-pointer
+                                        border rounded ml-5 justify-between cursor-pointer
 
                                         bg-white text-zinc-900 border-zinc-200
                                         dark:bg-gradient-to-b dark:from-slate-800 dark:to-zinc-900
