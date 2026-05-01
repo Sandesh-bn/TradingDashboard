@@ -12,6 +12,7 @@ export default function App() {
   const [activePage, setActivePage] = useState("home");
 
   const k = import.meta.env.VITE_API_KEY;
+  console.log("K ", k);
 
   const [cryptoData, setCryptoData] = useState([]);
   const [assets, setAssets] = useState(defaultAssets);
