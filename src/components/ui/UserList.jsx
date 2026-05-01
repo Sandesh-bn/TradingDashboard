@@ -102,7 +102,7 @@ export function UserList(props) {
 
     return (
         <div className="flex flex-col p-5">
-            <h1 className="text-3xl font-bold mb-5 text-zinc-400">WatchList</h1>
+            <h1 className="text-3xl font-bold mb-5 ">WatchList</h1>
             <div ref={wrapperRef} className="relative">
                 <Input className="relative h-10 bg-white text-black dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="email" placeholder="Search for ticker/crypto and click to add to watchlist" />
                 {errorMessage && (
@@ -110,7 +110,7 @@ export function UserList(props) {
                 )}
                 {searchTerm.length > 0 && searchResults.length > 0 && <div className="absolute z-50 w-full max-h-60 overflow-y-auto mt-2 bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[5px]">
                     {searchResults.map((result) => (
-                        <div key={result.id} onClick={() => handleAddTicker(result)} className="p-3 border border-gray-800 "><span className="font-bold mr-5 text-zinc-300 z-1001">{result.name}</span> <span className="text-zinc-300">{result.symbol}</span></div>
+                        <div key={result.id} onClick={() => handleAddTicker(result)} className="p-3 border border-gray-800 "><span className="font-bold mr-5 z-1001">{result.name}</span> <span >{result.symbol}</span></div>
                     ))}
                 </div>}
                 {chosenList && chosenList.length > 0 ?
