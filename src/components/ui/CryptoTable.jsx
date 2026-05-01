@@ -29,35 +29,39 @@ export function CryptoTable(props) {
         circulating_supply
     */
 
-    function handleRowClick(name, index){
+    function handleRowClick(name, index) {
         setCryptoInfo({ name, index })
     }
 
 
     return (
-        <Table>
+        <Table className="w-full table-fixed">
             <TableHeader>
                 <TableRow className="border-b border-zinc-700" >
-                    <TableHead className="w-[100px] text-[#e6e6ea] text-base">Name</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">Price</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">%</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">24 hour high</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">24 hour low</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">24 hour volume</TableHead>
-                    <TableHead className="text-[#e6e6ea] text-base">Market cap</TableHead>
+                    <TableHead className="text-base">Name</TableHead>
+                    <TableHead className="text-base">Price</TableHead>
+                    <TableHead className="text-base">%</TableHead>
+                    <TableHead className="text-base">24 hour high</TableHead>
+                    <TableHead className="text-base">24 hour low</TableHead>
+                    <TableHead className="text-base">24 hour volume</TableHead>
+                    <TableHead className="text-base">Market cap</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {cryptoData && Array.isArray(cryptoData) && cryptoData.map((data, index) => (
-                    <TableRow className="cursor-pointer hover:bg-zinc-800 text-[#e6e6ea] border-b border-zinc-700" onClick={() => handleRowClick(data.id, index)} key={data.id}>
+                    <TableRow className="cursor-pointer border-b border-zinc-700" onClick={() => handleRowClick(data.id, index)} key={data.id}>
                         <TableCell className="text-base">
-                            <img className="w-5 h-5 inline m-2" src={data.image} />
-                            {data.name} ({data.symbol})
+                            <div className="flex items-center gap-2 min-w-0">
+                                <img className="w-5 h-5 shrink-0" src={data.image} />
+                                <span className="truncate">
+                                    {data.name} ({data.symbol})
+                                </span>
+                            </div>
                         </TableCell>
                         <TableCell className="text-base">{formatCurrency(data.current_price)}</TableCell>
                         <TableCell className={data.price_change_percentage_24h > 0 ? "text-green-400 font-medium" : "text-red-600  text-base"}>{data.price_change_percentage_24h}</TableCell>
                         <TableCell className="text-base">{formatCurrency(data.high_24h)}</TableCell>
-                        <TableCell className="text-base" className="">{formatCurrency(data.low_24h)}</TableCell>
+                        <TableCell className="text-base" >{formatCurrency(data.low_24h)}</TableCell>
                         <TableCell className="text-base">{data.price_change_percentage_24h}</TableCell>
                         <TableCell className="text-base">{formatLargeNumber(data.market_cap)}</TableCell>
                     </TableRow>
