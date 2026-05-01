@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useEffect, useState } from "react";
 
 import {
@@ -17,45 +16,72 @@ export function ChartComponent({
   days = 7,
 }) {
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    let ignore = false;
+
     async function fetchData() {
-      const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}`;
+      setError("");
+      const url = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(coinId)}/market_chart?vs_currency=usd&days=${days}`;
 
-      const res = await fetch(url);
-      const json = await res.json();
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
 
-      const formatted = json.prices.map(
-        ([ts, price]) => ({
-          time:
-            days <= 1
-              ? new Date(ts).toLocaleTimeString(
-                [],
-                {
-                  hour: "numeric",
-                  minute: "2-digit",
-                }
-              )
-              : new Date(ts).toLocaleDateString(
-                [],
-                {
-                  month: "short",
-                  day: "numeric",
-                }
-              ),
+        if (!res.ok || !Array.isArray(json.prices)) {
+          throw new Error(json?.status?.error_message || "Price chart unavailable.");
+        }
 
-          price: Number(price.toFixed(2)),
-        })
-      );
+        const formatted = json.prices.map(
+          ([ts, price]) => ({
+            time:
+              days <= 1
+                ? new Date(ts).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  }
+                )
+                : new Date(ts).toLocaleDateString(
+                  [],
+                  {
+                    month: "short",
+                    day: "numeric",
+                  }
+                ),
 
-      setData(formatted);
+            price: Number(price.toFixed(2)),
+          })
+        );
+
+        if (!ignore) {
+          setData(formatted);
+        }
+      } catch (err) {
+        if (!ignore) {
+          setData([]);
+          setError(err.message || "Price chart unavailable.");
+        }
+      }
     }
 
     fetchData();
+
+    return () => {
+      ignore = true;
+    };
   }, [coinId, days]);
 
   return (
     <div className="w-full h-[320px]">
+      {error && (
+        <div className="flex h-full items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+          {error}
+        </div>
+      )}
+      {!error && (
       <ResponsiveContainer
         width="100%"
         height="100%"
@@ -169,6 +195,7 @@ export function ChartComponent({
           />
         </AreaChart>
       </ResponsiveContainer>
+      )}
     </div>
   );
 }

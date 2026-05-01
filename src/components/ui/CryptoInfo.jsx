@@ -10,11 +10,13 @@ export function CryptoInfo(props) {
             </div>
         )
     }
-    const { image, name, current_price, market_cap, ath, ath_date,
-        max_supply, market_cap_rank, price_change_percentage_24h
+    const { image, name, current_price, market_cap, ath,
+        max_supply, price_change_percentage_24h
     } = selectedCoinInfo;
 
-    const allTimeHighDate = new Date(ath_date).toLocaleString();
+    const dailyChange = Number(price_change_percentage_24h);
+    const hasDailyChange = Number.isFinite(dailyChange);
+
     return (
         <div className="flex flex-col
             hover:shadow-2xl
@@ -35,10 +37,10 @@ export function CryptoInfo(props) {
             <div className="flex flex-row">
                 <p className="text-4xl py-5 font-bold">{formatCurrency(current_price)}</p>
                 <span
-                    className={`${price_change_percentage_24h > 0 ? 'bg-green-500' : 'bg-red-500'
+                    className={`${dailyChange > 0 ? 'bg-green-500' : 'bg-red-500'
                         } h-8 mx-4 my-7 text-white text-center p-[5px] rounded-md`}
                 >
-                    {price_change_percentage_24h.toFixed(2)}% (24h)</span>
+                    {hasDailyChange ? dailyChange.toFixed(2) : "0.00"}% (24h)</span>
             </div>
             <div>
                 <div className="flex justify-between"><p className="text-sm py-1 ">Market Cap:</p> <p  className="text-sm py-1 ">{formatCurrency(market_cap)}</p></div>

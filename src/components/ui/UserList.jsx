@@ -1,38 +1,31 @@
 import { Input } from "@/components/ui/input"
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { formatCurrency } from "../../utils/formatCurrency";
 import { X } from 'lucide-react';
 
+function getSavedWatchlist() {
+    try {
+        const json = localStorage.getItem("chosenList");
+        const savedItems = json ? JSON.parse(json) : [];
+        return Array.isArray(savedItems) ? savedItems : [];
+    } catch {
+        localStorage.removeItem("chosenList");
+        return [];
+    }
+}
 
 export function UserList(props) {
-    let { cryptoData, setCryptoInfo } = props;
+    let { cryptoData = [], setCryptoInfo } = props;
     const wrapperRef = useRef(null);
 
-    const [defaultList, setDefaultList] = useState([]);
     const [searchTerm, setSearchTerm] = useState('')
-    const [searchResults, setSearchResults] = useState([]);
-    const [chosenList, setChosenList] = useState([]);
+    const [chosenList, setChosenList] = useState(getSavedWatchlist);
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        let json = localStorage.getItem("chosenList");
-        let localStorageChosenItems = (!json) ? [] : JSON.parse(json);
-
-        let newDefaultList = [];
-        for (let dresult of cryptoData) {
-            for (let result of localStorageChosenItems) {
-                if (dresult.name == result.name)
-                    continue;
-            }
-            newDefaultList.push(dresult);
-        }
-
-        setDefaultList(newDefaultList);
-
-        setChosenList(localStorageChosenItems);
         function handleClickOutside(e) {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-                setSearchResults([]);
+                setSearchTerm("");
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -40,46 +33,42 @@ export function UserList(props) {
     }, []);
 
 
-    useEffect(() => {
-        if (!Array.isArray(cryptoData))
-            return;
-
-        let newList = [];
-        for (let i = 0; i < cryptoData.length; i++) {
-            const { name, id, symbol, price_change_percentage_24h, current_price } = cryptoData[i];
-            newList.push({
-                name: name.toLowerCase(),
-                id: id.toLowerCase(),
-                symbol: symbol.toLowerCase(),
-                price_change_percentage_24h,
-                current_price,
-                index: i
-            }
-            )
+    const defaultList = useMemo(() => {
+        if (!Array.isArray(cryptoData)) {
+            return [];
         }
-        setDefaultList(newList);
-    }, [cryptoData])
-    // console.log("UL");
-    // console.log(cryptoData)
 
-    useEffect(() => {
+        const chosenIds = new Set(chosenList.map((item) => item.id));
+        return cryptoData
+            .filter((coin) => coin?.name && coin?.id && coin?.symbol)
+            .map((coin, index) => {
+                const { name, id, symbol, price_change_percentage_24h, current_price } = coin;
+                return {
+                    name: name.toLowerCase(),
+                    id: id.toLowerCase(),
+                    symbol: symbol.toLowerCase(),
+                    price_change_percentage_24h,
+                    current_price,
+                    index
+                };
+            })
+            .filter((item) => !chosenIds.has(item.id));
+    }, [cryptoData, chosenList]);
+
+    const searchResults = useMemo(() => {
         let currentSearchTerm = searchTerm.trim().toLowerCase();
         if (!currentSearchTerm || currentSearchTerm.length == 0) {
-            setSearchResults([]);
-            return;
+            return [];
         }
 
         console.log('searchterm', searchTerm)
-        let newSearchResults = defaultList.filter((result) => {
+        return defaultList.filter((result) => {
             return (result.name.startsWith(currentSearchTerm) ||
                 result.id.startsWith(currentSearchTerm) ||
                 result.symbol.startsWith(currentSearchTerm)
             )
         })
-
-        setSearchResults(newSearchResults);
-
-    }, [searchTerm]);
+    }, [searchTerm, defaultList]);
 
     function handleAddTicker(result) {
         if (chosenList.length == 10) {
@@ -92,41 +81,23 @@ export function UserList(props) {
             return;
         }
 
-        let newDefaultList = defaultList.filter(item => item.name != result.name && item.symbol != result.symbol);
-        setDefaultList(newDefaultList);
-        // let newSearchResults = searchResults.filter(item => item.name != result.name && item.symbol != result.symbol);
-        // setSearchResults(newSearchResults)
-        // let newChosenList = [...chosenList, result]
-        // setChosenList(newChosenList)
-        // localStorage.setItem("chosenList", JSON.stringify(newChosenList));
         const newChosenList = [...chosenList, result];
         setChosenList(newChosenList);
         localStorage.setItem("chosenList", JSON.stringify(newChosenList));
+        setErrorMessage("");
         setSearchTerm(""); // clear search after add
-        setSearchResults([]); // close dropdown
     }
 
     function removeFromWatchList(result) {
         const newChosenList = chosenList.filter(item => item.id !== result.id);
         setChosenList(newChosenList);
         localStorage.setItem("chosenList", JSON.stringify(newChosenList));
-        if (defaultList.some(item => item.id === result.id)) {
-            return;
-        }
-        let newDefaultList = [...defaultList, result]
-        setDefaultList(newDefaultList);
-
-        // let newSearchResults = [...searchResults, result]
-        // setSearchResults(newSearchResults)
-        // let newChosenList = chosenList.filter(item => (item.name != result.name) && (item.symbol != result.symbol));
-        // setChosenList(newChosenList)
-        // localStorage.setItem("chosenList", JSON.stringify(newChosenList));
-
+        setErrorMessage("");
     }
 
     function handleClickWatchList(result) {
         console.log(result)
-        setCryptoInfo({ name: result.name, index: result.index })
+        setCryptoInfo({ id: result.id, index: result.index })
     }
 
     return (
@@ -134,9 +105,12 @@ export function UserList(props) {
             <h1 className="text-3xl font-bold mb-5 text-zinc-400">WatchList</h1>
             <div ref={wrapperRef} className="relative">
                 <Input className="relative h-10 bg-white text-black dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type="email" placeholder="Search for ticker/crypto and click to add to watchlist" />
+                {errorMessage && (
+                    <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
+                )}
                 {searchTerm.length > 0 && searchResults.length > 0 && <div className="absolute z-50 w-full max-h-60 overflow-y-auto mt-2 bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-[5px]">
-                    {searchResults.map((result, index) => (
-                        <div onClick={() => handleAddTicker(result)} className="p-3 border border-gray-800 "><span className="font-bold mr-5 text-zinc-300 z-1001">{result.name}</span> <span className="text-zinc-300">{result.symbol}</span></div>
+                    {searchResults.map((result) => (
+                        <div key={result.id} onClick={() => handleAddTicker(result)} className="p-3 border border-gray-800 "><span className="font-bold mr-5 text-zinc-300 z-1001">{result.name}</span> <span className="text-zinc-300">{result.symbol}</span></div>
                     ))}
                 </div>}
                 {chosenList && chosenList.length > 0 ?
