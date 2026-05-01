@@ -80,7 +80,7 @@ export default function HomePage(props) {
                     <ChartComponent  coinId={selectedCrypto} labels={labels} values={values} />
                 </div>
                 <div>
-                    <div className='py-2'>
+                    <div className='py-2 ml-3'>
                         <p className='text-2xl font-bold py-2'>Today: {formatCurrency(overallAssetsData.total)}</p>
                         {
                             overallAssetsData.percentageChangeDaily > 0 ?

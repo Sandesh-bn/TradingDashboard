@@ -114,7 +114,7 @@ export default function App() {
         return <CryptoPrices cryptoData={cryptoData}  />;
 
       case "watchlist":
-        return <WatchList />;
+        return <WatchList cryptoData={cryptoData}  />;
 
       case "settings":
         return <SettingsPage />;
