@@ -8,7 +8,7 @@ import { defaultAssets } from './utils/defaultAssets';
 
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [activePage, setActivePage] = useState("home");
 
   const k = import.meta.env.VITE_API_KEY;
@@ -16,6 +16,7 @@ export default function App() {
 
   const [cryptoData, setCryptoData] = useState([]);
   const [assets, setAssets] = useState(defaultAssets);
+  const [assetsLoading, setAssetsLoading] = useState(true);
 
   const [overallAssetsData, setOverallAssetsdata] = useState({
     total: '',
@@ -52,6 +53,7 @@ export default function App() {
   }
 
   async function updateDefaultAssets() {
+    setAssetsLoading(true);
     try {
       const ids = Object.keys(defaultAssets).join(",");
       const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}`;
@@ -78,11 +80,13 @@ export default function App() {
       calculatePortfolioSummary(updatedAssets);
     } catch (err) {
       console.error("Error fetching data:", err);
+    } finally {
+      setAssetsLoading(false);
     }
   }
 
   async function getCryptoData() {
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
+    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usdx';
     const options = { method: 'GET', headers: { 'x-cg-demo-api-key': k } };
 
     try {
@@ -121,7 +125,7 @@ export default function App() {
         return <SettingsPage />;
 
       default:
-        return <HomePage overallAssetsData={overallAssetsData} assets={assets} />;
+        return <HomePage overallAssetsData={overallAssetsData} assets={assets} assetsLoading={assetsLoading} />;
     }
   };
 

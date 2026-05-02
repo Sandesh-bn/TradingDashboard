@@ -17,12 +17,14 @@ export function ChartComponent({
 }) {
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let ignore = false;
 
     async function fetchData() {
       setError("");
+      setLoading(true);
       const url = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(coinId)}/market_chart?vs_currency=usd&days=${days}`;
 
       try {
@@ -58,11 +60,13 @@ export function ChartComponent({
 
         if (!ignore) {
           setData(formatted);
+          setLoading(false);
         }
       } catch (err) {
         if (!ignore) {
           setData([]);
           setError(err.message || "Price chart unavailable.");
+          setLoading(false);
         }
       }
     }
@@ -76,12 +80,23 @@ export function ChartComponent({
 
   return (
     <div className="w-full h-[320px]">
+      {loading && (
+        <div className="flex h-full flex-col justify-end gap-3 p-4">
+          <div className="h-48 w-full animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+          <div className="flex justify-between">
+            <div className="h-3 w-14 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-3 w-14 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-3 w-14 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-3 w-14 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+        </div>
+      )}
       {error && (
         <div className="flex h-full items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
           {error}
         </div>
       )}
-      {!error && (
+      {!loading && !error && (
       <ResponsiveContainer
         width="100%"
         height="100%"
