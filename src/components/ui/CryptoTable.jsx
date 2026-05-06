@@ -33,7 +33,8 @@ export function CryptoTable(props) {
         setCryptoInfo({ name, index })
     }
 
-
+    console.log("\n\nCD");
+    console.log(cryptoData)
     return (
         <Table className="w-full table-fixed">
             <TableHeader>

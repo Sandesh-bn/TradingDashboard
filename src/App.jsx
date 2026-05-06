@@ -12,7 +12,7 @@ export default function App() {
   const [activePage, setActivePage] = useState("home");
 
   const k = import.meta.env.VITE_API_KEY;
-  console.log("K ", k);
+  // console.log("K ", k);
 
   const [cryptoData, setCryptoData] = useState([]);
   const [assets, setAssets] = useState(defaultAssets);
@@ -86,7 +86,7 @@ export default function App() {
   }
 
   async function getCryptoData() {
-    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usdx';
+    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
     const options = { method: 'GET', headers: { 'x-cg-demo-api-key': k } };
 
     try {
